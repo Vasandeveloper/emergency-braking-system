@@ -1,9 +1,8 @@
-// Emergency Braking System with LED and Motor
-
 const int trigPin = 9;
 const int echoPin = 10;
-const int motorPin = 5;  // Motor control pin
-const int ledPin = 6;    // LED alert pin
+const int motorPin = 5;
+const int ledPin = 6;
+const int buzzerPin = 7;
 
 long duration;
 int distance;
@@ -13,18 +12,19 @@ void setup() {
   pinMode(echoPin, INPUT);
   pinMode(motorPin, OUTPUT);
   pinMode(ledPin, OUTPUT);
+  pinMode(buzzerPin, OUTPUT);
   Serial.begin(9600);
 }
 
 void loop() {
-  // Trigger ultrasonic pulse
+  // Trigger ultrasonic
   digitalWrite(trigPin, LOW);
   delayMicroseconds(2);
   digitalWrite(trigPin, HIGH);
   delayMicroseconds(10);
   digitalWrite(trigPin, LOW);
 
-  // Measure echo duration and calculate distance
+  // Read distance
   duration = pulseIn(echoPin, HIGH);
   distance = duration * 0.034 / 2;
 
@@ -32,13 +32,14 @@ void loop() {
   Serial.print(distance);
   Serial.println(" cm");
 
-  // Check for object within threshold (e.g., 20 cm)
   if (distance < 20 && distance > 0) {
-    digitalWrite(motorPin, LOW);  // Stop motor
-    digitalWrite(ledPin, HIGH);   // Turn on LED alert
+    digitalWrite(motorPin, LOW);   // Stop motor
+    digitalWrite(ledPin, HIGH);    // LED ON
+    digitalWrite(buzzerPin, HIGH); // Buzzer ON
   } else {
-    digitalWrite(motorPin, HIGH); // Run motor
-    digitalWrite(ledPin, LOW);    // Turn off LED
+    digitalWrite(motorPin, HIGH);  // Start motor
+    digitalWrite(ledPin, LOW);     // LED OFF
+    digitalWrite(buzzerPin, LOW);  // Buzzer OFF
   }
 
   delay(200);
